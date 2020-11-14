@@ -71,7 +71,7 @@ function Update-ElvUI
     }
     Invoke-RestMethod -Uri $ArchiveURI -OutFile $TempFile -Method Get -ErrorAction Stop
 
-    Expand-Archive -Path $env:TEMP\Elvui.zip -DestinationPath $InterfaceFOlder -Force -
+    Expand-Archive -Path $env:TEMP\Elvui.zip -DestinationPath $InterfaceFOlder -Force
 
     Remove-Item $TempFile
 }
