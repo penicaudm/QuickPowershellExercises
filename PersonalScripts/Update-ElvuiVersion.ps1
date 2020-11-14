@@ -69,11 +69,11 @@ function Update-ElvUI
     {
         Remove-Item $TempFile
     }
-    Invoke-RestMethod -Uri $ArchiveURI -OutFile $env:TEMP\Elvui.zip -Method Get -ErrorAction Stop
+    Invoke-RestMethod -Uri $ArchiveURI -OutFile $TempFile -Method Get -ErrorAction Stop
 
     Expand-Archive -Path $env:TEMP\Elvui.zip -DestinationPath $InterfaceFOlder -Force -
 
-    Remove-Item 
+    Remove-Item $TempFile
 }
 #endregion
 #region Static
