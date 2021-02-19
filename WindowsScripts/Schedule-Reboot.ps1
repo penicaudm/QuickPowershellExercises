@@ -65,7 +65,7 @@ function Schedule-Reboot {
         }
         else {
             [int]$Delay = ($RebootTime - $CurrentTime).TotalSeconds
-            [string]$scriptblock = "shutdown -r -t $Delay"
+            [string]$scriptblock = "shutdown /r /t $Delay"
             if ($ComputerName) {
                 $scriptblock += " /m $ComputerName"
             }
