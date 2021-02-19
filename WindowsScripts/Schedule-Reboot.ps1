@@ -1,15 +1,15 @@
 function Schedule-Reboot {
-    # Schedule a reboot is annoying
+    # Scheduling a reboot is annoying
     # Let's use PowerShell instead!
     [cmdletbinding (DefaultParameterSetName = 'DateParameter', SupportsShouldProcess)]
     param(
-        # Standard use of the function : Store (get-date x/y/z) in a variable then call this function, easy enough
+        # Standard use of the function: Store (get-date x/y/z) in a variable then call this function, easy enough
         [parameter (Mandatory, Position = 0, ParameterSetName = 'DateParameter')]
         [datetime]$DateTime,
-        # If you target a computerName, make sure it can be resolved
+        # If you target a computer, make sure its name can be resolved by dns.
         # Doesnt support an array of computernames for now, use this:
         # [collection] | Foreach-object { Schedule-Reboot -Computername $_ }
-        [parameter (Position = 1)]
+        [parameter (Position = 2)]
         [ValidateScript(
             {
                 Resolve-DnsName $_ -QuickTimeout 2>$null
@@ -17,11 +17,11 @@ function Schedule-Reboot {
         )]
         [string]$ComputerName,
         # Advanced: provide a value as an integer...
-        [parameter (Position = 2, ParameterSetName = 'TimeHelper', Mandatory)]
+        [parameter (Position = 0, ParameterSetName = 'TimeHelper', Mandatory)]
         [int]$In,
         #... of minutes, hours, days and let PowerShell do the job for you.
         # Does not work if you need to reboot in x hours AND minutes, use the DateTime object in that case.
-        [parameter (Position = 3, ParameterSetName = 'TimeHelper', Mandatory)]
+        [parameter (Position = 1, ParameterSetName = 'TimeHelper', Mandatory)]
         [ValidateSet("Seconds", "Minutes", "Hours", "Days")]
         [string]$Unit
     )
@@ -66,7 +66,7 @@ function Schedule-Reboot {
         else {
             [int]$Delay = ($RebootTime - $CurrentTime).TotalSeconds
             [string]$scriptblock = "shutdown /r /t $Delay"
-            if ($ComputerName) {
+            if ( ($ComputerName) -and ($env:COMPUTERNAME -ne $computername) ) {
                 $scriptblock += " /m $ComputerName"
             }
             Write-Verbose "Scheduling reboot in $($delay/60) minutes"
