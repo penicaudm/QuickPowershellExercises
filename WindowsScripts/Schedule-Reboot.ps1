@@ -60,7 +60,7 @@ function Schedule-Reboot {
         )
         [datetime]$CurrentTime = get-date
 
-        if ($RebootTime -gt $CurrentTime) {
+        if ($CurrentTime -gt $RebootTime) {
             throw "Cannot reboot in the past!"
         }
         else {
