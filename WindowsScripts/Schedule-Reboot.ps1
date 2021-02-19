@@ -25,6 +25,7 @@ function Schedule-Reboot {
         [ValidateSet("Seconds", "Minutes", "Hours", "Days")]
         [string]$Unit
     )
+#region FUNCTIONS
     function Get-DynamicDateObjectFromInput {
 
         param(
@@ -41,11 +42,12 @@ function Schedule-Reboot {
             $verbosestring = "Scheduled DateTime is {0} {1} {2} at {3:d2}h{4:d2}" -f `
                 $RebootTime.DayOfWeek, `
                 $RebootTime.Day, `
-            (Get-date $RebootTime -UFormat %B), `
+                (Get-date $RebootTime -UFormat %B), `
                 $RebootTime.Hour, `
                 $RebootTime.Minute
 
             Write-Verbose $verbosestring -Verbose
+
             return $RebootTime
         }
         else {
@@ -54,7 +56,7 @@ function Schedule-Reboot {
     }
     function Schedule-RebootCommand {
         param(
-        [datetime]$RebootTime
+            [datetime]$RebootTime
         )
         [datetime]$CurrentTime = get-date
 
@@ -71,15 +73,15 @@ function Schedule-Reboot {
             Invoke-Expression $scriptblock
         }
     }
+#endregion
     if ($pscmdlet.ParameterSetName -eq 'TimeHelper') {
         #build date object with the data provided
         $DateTime = Get-DynamicDateObjectFromInput -Value $in -Method $Unit
     }
     if ($pscmdlet.ShouldProcess(
-    "$(if ($computername) {"$computername"} else { $env:COMPUTERNAME + ' (this computer)' })",
-    "Reboot at $Datetime") 
-    )
-    {
+            "$(if ($computername) {"$computername"} else { $env:COMPUTERNAME + ' (this computer)' })",
+            "Reboot at $Datetime") 
+    ) {
         Schedule-RebootCommand -RebootTime $DateTime
         Write-Warning "Scheduled reboot set! Use shutdown -a (/m computername) if you need to cancel!"
     }
