@@ -18,7 +18,7 @@ function Schedule-Reboot {
         [string]$ComputerName,
         # Advanced: provide a value as an integer...
         [parameter (Position = 0, ParameterSetName = 'TimeHelper', Mandatory)]
-        [int]$In,
+        [double]$In,
         #... of minutes, hours, days and let PowerShell do the job for you.
         # Does not work if you need to reboot in x hours AND minutes, use the DateTime object in that case.
         [parameter (Position = 1, ParameterSetName = 'TimeHelper', Mandatory)]
@@ -35,8 +35,11 @@ function Schedule-Reboot {
             [ValidateSet("Seconds", "Minutes", "Hours", "Days")]
             [string]$Method
         )
+        # get-current date in a variable...
         $DateObject = Get-Date
+        # ... and use it to build an expression depending on user input.
         $Expression = "`$DateObject.Add$Method($Value)"
+        
         $RebootTime = Invoke-Expression $Expression
         if ($RebootTime -is [DateTime]) {
             $verbosestring = "Scheduled DateTime is {0} {1} {2} at {3:d2}h{4:d2}" -f `
