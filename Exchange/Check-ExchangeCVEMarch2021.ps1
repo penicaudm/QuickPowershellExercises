@@ -30,7 +30,7 @@ function Check-CVE_2021_26857
         [string]$ComputerName
     )
     Get-EventLog -ComputerName $ComputerName -LogName Application -Source "MSExchange Unified Messaging" -EntryType Error `
-    | Where-Object { $_.Message -like "*System.InvalidCastException*" } | 
+    | Where-Object { $_.Message -like "*System.InvalidCastException*" }
     if ($error[0].FullyQualifiedErrorId -eq 'GetEventLogNoEntriesFound,Microsoft.PowerShell.Commands.GetEventLogCommand' )
     {
         Write-Output "not vulnerable to CVE_2021_26857"
